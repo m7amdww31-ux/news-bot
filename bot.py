@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-بوت أخبار ديسكورد - المغني جود (أخبار)
+بوت أخبار ديسكورد
 =========================================
 بوت يجيب أخبار عربية عامة/عالمية من مصادر RSS.
 - أمر يدوي: #اخبار  (يجيب آخر الأخبار وقت ما تبي)
@@ -36,6 +36,9 @@ DEFAULT_CHANNEL = os.getenv("NEWS_CHANNEL_ID")
 
 # كم خبر يطلع مع أمر #اخبار افتراضياً
 DEFAULT_COUNT = 5
+
+# كم خبر ينشر في كل دورة نشر تلقائي (افتراضي ٣)
+PER_POST = int(os.getenv("NEWS_PER_POST", "3"))
 
 # ملف يحفظ الإعدادات والروابط المنشورة (ينحفظ محلياً)
 DATA_FILE = "data.json"
@@ -219,8 +222,8 @@ async def auto_news():
     if not new_items:
         return
 
-    # ننشر الأقدم أولاً، وبحد أقصى ٨ بالمرة الواحدة
-    new_items = new_items[:8]
+    # ننشر الأقدم أولاً، وبحد أقصى PER_POST بالمرة الواحدة
+    new_items = new_items[:PER_POST]
     for source, entry in reversed(new_items):
         try:
             await channel.send(embed=make_embed(source, entry))
